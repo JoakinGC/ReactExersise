@@ -1,32 +1,57 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 
 const EURO_DOLAR = 1.0097;
 
-const useCurrentChangerState = () => {
-  const [dolars, changeDolars] = useState(0);
-  const [euros, changeEuros] = useState(0);
+const useCurrencyConverter = () => {
+  const [euros, setEuros] = useState(0);
+  const [dollars, setDollars] = useState(0);
 
-  const onChangeInput = ({ target: { value: newValue } }) => {
-    changeDolars(newValue * EURO_DOLAR);
-    changeEuros(newValue * 1);
+  const handleInputChange = (value, inputType) => {
+    if (inputType === "euros") {
+      setEuros(value);
+      setDollars(value * EURO_DOLAR);
+    } else if (inputType === "dollars") {
+      setDollars(value);
+      setEuros(value / EURO_DOLAR);
+    }
   };
 
-  return { dolars, euros, onChangeInput };
+  return { euros, dollars, handleInputChange };
 };
 
-const CurrentChanger = () => {
-  const { dolars, euros, onChangeInput } = useCurrentChangerState();
+const CustomInput = () => {
+  const { euros, dollars, handleInputChange } = useCurrencyConverter();
+
+  const handleEurosChange = (event) => {
+    const value = event.target.value;
+    handleInputChange(value, "euros");
+  };
+
+  const handleDollarsChange = (event) => {
+    const value = event.target.value;
+    handleInputChange(value, "dollars");
+  };
 
   return (
-    <Fragment>
-      <input type="number" step="0.01" onChange={onChangeInput} />
-      Dolares: {dolars.toFixed(2)} Euros: {euros.toFixed(2)}
-    </Fragment>
+    <div>
+      <label htmlFor="eurosInput">Euros:</label>
+      <input
+        id="eurosInput"
+        type="number"
+        step="0.01"
+        value={euros}
+        onChange={handleEurosChange}
+      />
+      <label htmlFor="dollarsInput">Dollars:</label>
+      <input
+        id="dollarsInput"
+        type="number"
+        step="0.01"
+        value={dollars}
+        onChange={handleDollarsChange}
+      />
+    </div>
   );
 };
 
-function App() {
-  return <CurrentChanger />;
-}
-
-export default App;
+export default CustomInput;
