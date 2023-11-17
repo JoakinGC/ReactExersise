@@ -1,57 +1,53 @@
 import React, { useState } from "react";
 
-const EURO_DOLAR = 1.0097;
+const useCurrencyConverter = (initialValue, exchangeRate) => {
+  const [value, setValue] = useState(initialValue);
+  const [convertedValue, setConvertedValue] = useState(initialValue * exchangeRate);
 
-const useCurrencyConverter = () => {
-  const [euros, setEuros] = useState(0);
-  const [dollars, setDollars] = useState(0);
-
-  const handleInputChange = (value, inputType) => {
-    if (inputType === "euros") {
-      setEuros(value);
-      setDollars(value * EURO_DOLAR);
-    } else if (inputType === "dollars") {
-      setDollars(value);
-      setEuros(value / EURO_DOLAR);
+  const handleInputChange = (newValue) => {
+    if (!isNaN(newValue)) {
+      setValue(newValue);
+      setConvertedValue(newValue * exchangeRate);
     }
   };
 
-  return { euros, dollars, handleInputChange };
+  return { value, convertedValue, handleInputChange };
 };
 
-const CustomInput = () => {
-  const { euros, dollars, handleInputChange } = useCurrencyConverter();
+const CurrencyChanger = ({ currencySymbol, initialValue, change }) => {
+  const exchangeRate = parseFloat(change);
 
-  const handleEurosChange = (event) => {
-    const value = event.target.value;
-    handleInputChange(value, "euros");
-  };
+  const { value, convertedValue, handleInputChange } = useCurrencyConverter(
+    parseFloat(initialValue),
+    exchangeRate
+  );
 
-  const handleDollarsChange = (event) => {
-    const value = event.target.value;
-    handleInputChange(value, "dollars");
+  const handleValueChange = (event) => {
+    const newValue = parseFloat(event.target.value);
+    handleInputChange(newValue);
   };
 
   return (
     <div>
-      <label htmlFor="eurosInput">Euros:</label>
+      <label htmlFor="currencyInput">{`[${currencySymbol}]`}</label>
       <input
-        id="eurosInput"
+        id="currencyInput"
         type="number"
         step="0.01"
-        value={euros}
-        onChange={handleEurosChange}
+        value={value}
+        onChange={handleValueChange}
       />
-      <label htmlFor="dollarsInput">Dollars:</label>
-      <input
-        id="dollarsInput"
-        type="number"
-        step="0.01"
-        value={dollars}
-        onChange={handleDollarsChange}
-      />
+      <p>{`Euros: ${convertedValue.toFixed(2)}`}</p>
     </div>
   );
 };
 
-export default CustomInput;
+const App = () => (
+  <div>
+    <CurrencyChanger currencySymbol="$" initialValue="10" change="1.055925" />
+    <CurrencyChanger currencySymbol="£" initialValue="15" change="7.578144" />
+    <CurrencyChanger currencySymbol="¥" initialValue="20" change="0.8665750" />
+  </div>
+);
+
+export default App;
