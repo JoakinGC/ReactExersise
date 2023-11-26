@@ -24,14 +24,14 @@ const userInfoStyles = css`
 `;
 
 const CustomID = ({ user }) => {
-  const { name, surname, username, email, image } = user;
+  const { name, email, image } = user;
 
   return (
     <div className={cardStyles}>
       <img className={imageStyles} src={image} alt="Profile" />
       <div className={userInfoStyles}>
-        <h2>{`${name} ${surname}`}</h2>
-        <p>Username: {username}</p>
+        <h2>{`${name.first}`}</h2>
+        <p>Apellido: {name.last}</p>
         <p>Email: {email}</p>
       </div>
     </div>
